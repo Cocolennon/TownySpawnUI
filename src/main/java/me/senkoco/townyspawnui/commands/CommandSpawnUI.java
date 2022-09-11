@@ -4,6 +4,7 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Nation;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,6 +25,11 @@ public class CommandSpawnUI implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player p = (Player)sender;
+
+        if(!sender.hasPermission("townyspawnui.menu.open")) {
+            sender.sendMessage(ChatColor.RED + "You can't do that!");
+            return false;
+        }
 
         List<Nation> Nations = new LinkedList<Nation>(TownyUniverse.getInstance().getNations());
         int nationsCount = TownyUniverse.getInstance().getNations().size();

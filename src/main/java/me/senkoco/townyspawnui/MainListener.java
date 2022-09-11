@@ -6,6 +6,7 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Town;
 import me.senkoco.townyspawnui.commands.CommandSpawnUI;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -89,6 +90,10 @@ public class MainListener implements Listener {
     }
 
     public void teleportToTown(Player player, String townName){
-        player.performCommand("t spawn " + townName + " -ignore");
+        if(player.hasPermission("townyspawnui.menu.teleport")){
+            player.performCommand("t spawn " + townName + " -ignore");
+        }else{
+            player.sendMessage(ChatColor.RED + "You can't do that!");
+        }
     }
 }
