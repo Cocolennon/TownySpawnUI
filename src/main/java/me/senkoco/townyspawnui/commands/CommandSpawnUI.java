@@ -14,10 +14,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CommandSpawnUI implements CommandExecutor {
+    ItemStack noNation = getItem(Material.BLUE_STAINED_GLASS_PANE, "§c§lNation-less Towns", "noNation");
     static Inventory inv = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations");
     static Inventory inv2 = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations (2)");
     static Inventory inv3 = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations (3)");
@@ -34,34 +36,54 @@ public class CommandSpawnUI implements CommandExecutor {
         List<Nation> Nations = new LinkedList<Nation>(TownyUniverse.getInstance().getNations());
         int nationsCount = TownyUniverse.getInstance().getNations().size();
 
+        if(TownyAPI.getInstance().getTownsWithoutNation().size() != 0){
+            inv.setItem(22, noNation);
+            inv2.setItem(22, noNation);
+            inv3.setItem(22, noNation);
+        }
+
         if(nationsCount > 7){
-            inv.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "nextPageNations1"));
-            inv2.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "previousPageNations2"));
+            inv.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "page2"));
+            inv2.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "page1"));
             int menuSlot = 10;
             for(int j = 0; j < 7; j++){
                 String nationName = Nations.get(j).toString();
                 Nation nation = TownyAPI.getInstance().getNation(nationName);
-                inv.setItem(menuSlot, getItem(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName()));
+                ArrayList<String> itemlore = new ArrayList<>();
+                itemlore.add("§6§lLeader§f§l: §3§l" + nation.getKing().getName());
+                itemlore.add("§6§lCapital§f§l: §2§l" + nation.getCapital().getName());
+                itemlore.add("§6§lTowns§f§l: §9§l" + nation.getTowns().size());
+                itemlore.add("§6§lTotal Residents§f§l: §d§l" + nation.getResidents().size());
+                inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName(), itemlore));
                 menuSlot++;
             }
-            inv.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "nextPageNations1"));
             if(nationsCount > 14){
-                inv2.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "nextPageNations2"));
-                inv3.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "previousPageNations3"));
+                inv2.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "page3"));
+                inv3.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "page2"));
                 menuSlot = 10;
                 for(int j = 7; j < 14; j++){
                     String nationName = Nations.get(j).toString();
                     Nation nation = TownyAPI.getInstance().getNation(nationName);
-                    inv2.setItem(menuSlot, getItem(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName()));
+                    ArrayList<String> itemlore = new ArrayList<>();
+                    itemlore.add("§6§lLeader§f§l: §3§l" + nation.getKing().getName());
+                    itemlore.add("§6§lCapital§f§l: §2§l" + nation.getCapital().getName());
+                    itemlore.add("§6§lTowns§f§l: §9§l" + nation.getTowns().size());
+                    itemlore.add("§6§lTotal Residents§f§l: §d§l" + nation.getResidents().size());
+                    inv2.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName(), itemlore));
                     menuSlot++;
                 }
-                inv2.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "previousPageNations2"));
-                inv2.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "nextPageNations2"));
+                inv2.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "page1"));
+                inv2.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "page3"));
                 menuSlot = 10;
                 for(int j = 14; j < nationsCount; j++){
                     String nationName = Nations.get(j).toString();
                     Nation nation = TownyAPI.getInstance().getNation(nationName);
-                    inv3.setItem(menuSlot, getItem(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName()));
+                    ArrayList<String> itemlore = new ArrayList<>();
+                    itemlore.add("§6§lLeader§f§l: §3§l" + nation.getKing().getName());
+                    itemlore.add("§6§lCapital§f§l: §2§l" + nation.getCapital().getName());
+                    itemlore.add("§6§lTowns§f§l: §9§l" + nation.getTowns().size());
+                    itemlore.add("§6§lTotal Residents§f§l: §d§l" + nation.getResidents().size());
+                    inv3.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName(), itemlore));
                     menuSlot++;
                 }
             }else{
@@ -69,7 +91,12 @@ public class CommandSpawnUI implements CommandExecutor {
                 for(int j = 7; j < nationsCount; j++){
                     String nationName = Nations.get(j).toString();
                     Nation nation = TownyAPI.getInstance().getNation(nationName);
-                    inv2.setItem(menuSlot, getItem(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName()));
+                    ArrayList<String> itemlore = new ArrayList<>();
+                    itemlore.add("§6§lLeader§f§l: §3§l" + nation.getKing().getName());
+                    itemlore.add("§6§lCapital§f§l: §2§l" + nation.getCapital().getName());
+                    itemlore.add("§6§lTowns§f§l: §9§l" + nation.getTowns().size());
+                    itemlore.add("§6§lTotal Residents§f§l: §d§l" + nation.getResidents().size());
+                    inv2.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName(), itemlore));
                     menuSlot++;
                 }
             }
@@ -78,7 +105,12 @@ public class CommandSpawnUI implements CommandExecutor {
             for(int j = 0; j < nationsCount; j++){
                 String nationName = Nations.get(j).toString();
                 Nation nation = TownyAPI.getInstance().getNation(nationName);
-                inv.setItem(menuSlot, getItem(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName()));
+                ArrayList<String> itemlore = new ArrayList<>();
+                itemlore.add("§6§lLeader§f§l: §3§l" + nation.getKing().getName());
+                itemlore.add("§6§lCapital§f§l: §2§l" + nation.getCapital().getName());
+                itemlore.add("§6§lTowns§f§l: §9§l" + nation.getTowns().size());
+                itemlore.add("§6§lTotal Residents§f§l: §d§l" + nation.getResidents().size());
+                inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + nation.getName(), nation.getName(), itemlore));
                 menuSlot++;
             }
         }
@@ -97,6 +129,16 @@ public class CommandSpawnUI implements CommandExecutor {
         ItemMeta itM = it.getItemMeta();
         if(newName != null) itM.setDisplayName(newName);
         if(localizedName != null) itM.setLocalizedName(localizedName);
+        it.setItemMeta(itM);
+        return it;
+    }
+
+    public ItemStack getItemLore(Material material, String newName, String localizedName, ArrayList<String> itemlore){
+        ItemStack it = new ItemStack(material, 1);
+        ItemMeta itM = it.getItemMeta();
+        if(newName != null) itM.setDisplayName(newName);
+        if(localizedName != null) itM.setLocalizedName(localizedName);
+        if(itemlore != null) itM.setLore(itemlore);
         it.setItemMeta(itM);
         return it;
     }

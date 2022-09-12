@@ -23,7 +23,7 @@ public class Main extends JavaPlugin {
                 "towny-spawn-menu",
                 "Open the menu to travel to other towns",
                 new CommandSpawnUI(),
-                "spawn-menu", "town-list", "townlist"
+                "spawn-menu", "town-list", "townlist", "tsm"
         ));
     }
 }

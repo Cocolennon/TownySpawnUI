@@ -1,6 +1,6 @@
 name: TownySpawnUI
 author: Senkoco
-version: 1.0
+version: 1.0.3
 api-version: 1.19
 main: me.senkoco.townyspawnui.Main
 description: This plugin adds a browsable menu to teleport to other towns in Towny
