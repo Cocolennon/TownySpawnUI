@@ -20,6 +20,8 @@ import java.util.List;
 
 public class CommandSpawnUI implements CommandExecutor {
     ItemStack noNation = getItem(Material.BLUE_STAINED_GLASS_PANE, "§c§lNation-less Towns", "noNation");
+    ItemStack notPublic = getItem(Material.PURPLE_STAINED_GLASS_PANE, "§c§lPrivate Towns", "notPublic");
+    int menuSlot = 10;
     static Inventory inv = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations");
     static Inventory inv2 = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations (2)");
     static Inventory inv3 = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations (3)");
@@ -42,10 +44,23 @@ public class CommandSpawnUI implements CommandExecutor {
             inv3.setItem(22, noNation);
         }
 
+        int privateTownsCount = 0;
+        for(int j = 0; j < TownyAPI.getInstance().getTowns().size(); j++){
+            if(!TownyAPI.getInstance().getTowns().get(j).isPublic()){
+                privateTownsCount++;
+            }
+        }
+
+        if(privateTownsCount != 0){
+            inv.setItem(18, notPublic);
+            inv2.setItem(18, notPublic);
+            inv3.setItem(18, notPublic);
+        }
+
         if(nationsCount > 7){
             inv.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "page2"));
             inv2.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "page1"));
-            int menuSlot = 10;
+            menuSlot = 10;
             for(int j = 0; j < 7; j++){
                 String nationName = Nations.get(j).toString();
                 Nation nation = TownyAPI.getInstance().getNation(nationName);
@@ -101,7 +116,7 @@ public class CommandSpawnUI implements CommandExecutor {
                 }
             }
         }else{
-            int menuSlot = 10;
+            menuSlot = 10;
             for(int j = 0; j < nationsCount; j++){
                 String nationName = Nations.get(j).toString();
                 Nation nation = TownyAPI.getInstance().getNation(nationName);

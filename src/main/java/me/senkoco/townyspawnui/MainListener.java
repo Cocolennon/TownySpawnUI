@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import static org.bukkit.Bukkit.getLogger;
 
 public class MainListener implements Listener {
+    ItemStack townFiller = getItem(Material.BLACK_STAINED_GLASS_PANE, "§c§lClick on any town to teleport to it!", "townMenu");
+    int menuSlot = 1;
+
     @EventHandler
-    public void onClick(InventoryClickEvent event){
+    public void onClick(InventoryClickEvent event) {
         Inventory inv = event.getInventory();
         Player player = (Player)event.getWhoClicked();
         ItemStack current = event.getCurrentItem();
@@ -30,6 +33,8 @@ public class MainListener implements Listener {
             if(inv.getItem(0).getItemMeta().getLocalizedName().equals("nationMenu")) {
                 if(current.getItemMeta().getLocalizedName().equals("noNation")) {
                     openNationlessTowns(event, player);
+                }else if(current.getItemMeta().getLocalizedName().equals("notPublic")){
+                    openPrivateTowns(event, player);
                 }else{
                     openTownsOfNation(event, current, player);
                 }
@@ -69,61 +74,91 @@ public class MainListener implements Listener {
         if (current == null || !current.getItemMeta().hasLocalizedName() || current.getItemMeta().getLocalizedName().equals("nationMenu"))
             return;
         switch (current.getItemMeta().getLocalizedName()) {
-            case "page1":
+            case "page1" -> {
                 CommandSpawnUI.openInventory(player, 1);
                 return;
-            case "page2":
+            }
+            case "page2" -> {
                 CommandSpawnUI.openInventory(player, 2);
                 return;
-            case "page3":
+            }
+            case "page3" -> {
                 CommandSpawnUI.openInventory(player, 3);
                 return;
-            default:
-                break;
+            }
+            default -> {
+            }
         }
-        Inventory inv = Bukkit.createInventory(null, 27, "§6§l" + current.getItemMeta().getLocalizedName() + "§f§l: §3§lTowns");
         Nation nation = TownyAPI.getInstance().getNation(current.getItemMeta().getLocalizedName());
-        int menuSlot = 1;
+        Inventory inv = Bukkit.createInventory(null, 27, "§6§l" + nation.getName() + "§f§l: §3§lTowns");
+        menuSlot = 1;
         if (nation != null) {
             for (int j = 0; j < nation.getTowns().size(); j++) {
                 Town town = nation.getTowns().get(j);
-                ArrayList<String> itemlore = new ArrayList<>();
-                itemlore.add("§6§lNation§f§l: §3§l" + town.getName());
-                itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
-                itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
-                itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
-                inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
-                inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
-                menuSlot++;
+                if(town.isPublic()){
+                    ArrayList<String> itemlore = new ArrayList<>();
+                    itemlore.add("§6§lNation§f§l: §3§l" + town.getNationOrNull().getName());
+                    itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
+                    itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
+                    itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
+                    inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
+                    menuSlot++;
+                }
             }
         }
-        CommandSpawnUI.fillEmpty(inv, getItem(Material.BLACK_STAINED_GLASS_PANE, "§c§lClick on any town to teleport to it!", "townMenu"));
+        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
+        CommandSpawnUI.fillEmpty(inv, townFiller);
         player.openInventory(inv);
     }
 
     public void openNationlessTowns(InventoryClickEvent event, Player player){
         event.setCancelled(true);
-        Inventory inv = Bukkit.createInventory(null, 27, "§6§lNation-less: Towns");
-        int menuSlot = 1;
+        Inventory inv = Bukkit.createInventory(null, 27, "§6§lNation-less: §3§lTowns");
+        menuSlot = 1;
         for(int j = 0; j < TownyAPI.getInstance().getTownsWithoutNation().size(); j++){
             Town town = TownyAPI.getInstance().getTownsWithoutNation().get(j);
-            ArrayList<String> itemlore = new ArrayList<>();
-            itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
-            itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
-            itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
-            inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
-            inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
-            menuSlot++;
+            if(town.isPublic()){
+                ArrayList<String> itemlore = new ArrayList<>();
+                itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
+                itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
+                itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
+                inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
+                menuSlot++;
+            }
         }
-        CommandSpawnUI.fillEmpty(inv, getItem(Material.BLACK_STAINED_GLASS_PANE, "§c§lClick on any town to teleport to it!", "townMenu"));
+        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
+        CommandSpawnUI.fillEmpty(inv, townFiller);
+        player.openInventory(inv);
+    }
+
+    public void openPrivateTowns(InventoryClickEvent event, Player player) {
+        event.setCancelled(true);
+        Inventory inv = Bukkit.createInventory(null, 27, "§6§lPrivate Towns");
+        menuSlot = 1;
+        for(int j = 0; j < TownyAPI.getInstance().getTowns().size(); j++){
+            Town town = TownyAPI.getInstance().getTowns().get(j);
+            if(!town.isPublic()){
+                ArrayList<String> itemlore = new ArrayList<>();
+                if(town.hasNation()) itemlore.add("§6§lNation§f§l: §3§l" + town.getNationOrNull().getName());
+                itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
+                itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
+                itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
+                inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
+                menuSlot++;
+            }
+        }
+        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
+        CommandSpawnUI.fillEmpty(inv, townFiller);
         player.openInventory(inv);
     }
 
     public void teleportToTown(Player player, String townName){
+        Town town = TownyAPI.getInstance().getTown(townName);
         if(!player.hasPermission("townyspawnui.menu.teleport")) {
             player.sendMessage(ChatColor.RED + "You can't do that!");
             return;
         }
+        if(!town.isPublic()) return;
         player.performCommand("t spawn " + townName + " -ignore");
         getLogger().info(player.getName() + " teleported to " + townName);
     }
