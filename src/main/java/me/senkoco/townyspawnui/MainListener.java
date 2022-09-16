@@ -3,7 +3,9 @@ package me.senkoco.townyspawnui;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 import me.senkoco.townyspawnui.commands.CommandSpawnUI;
+import me.senkoco.townyspawnui.utils.metadata.MetaData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -96,12 +98,16 @@ public class MainListener implements Listener {
             for (int j = 0; j < nation.getTowns().size(); j++) {
                 Town town = nation.getTowns().get(j);
                 if(town.isPublic()){
+                    Material material = Material.RED_STAINED_GLASS_PANE;
+                    if(MetaDataUtil.hasMeta(town, MetaData.blockInMenu)){
+                        material = Material.valueOf(MetaData.getBlockInMenu(town));
+                    }
                     ArrayList<String> itemlore = new ArrayList<>();
                     itemlore.add("§6§lNation§f§l: §3§l" + town.getNationOrNull().getName());
                     itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
                     itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
                     itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
-                    inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
+                    inv.setItem(menuSlot, getItemLore(material, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
                     menuSlot++;
                 }
             }
@@ -118,11 +124,15 @@ public class MainListener implements Listener {
         for(int j = 0; j < TownyAPI.getInstance().getTownsWithoutNation().size(); j++){
             Town town = TownyAPI.getInstance().getTownsWithoutNation().get(j);
             if(town.isPublic()){
+                Material material = Material.RED_STAINED_GLASS_PANE;
+                if(MetaDataUtil.hasMeta(town, MetaData.blockInMenu)){
+                    material = Material.valueOf(MetaData.getBlockInMenu(town));
+                }
                 ArrayList<String> itemlore = new ArrayList<>();
                 itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
                 itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
                 itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
-                inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
+                inv.setItem(menuSlot, getItemLore(material, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
                 menuSlot++;
             }
         }
@@ -138,12 +148,16 @@ public class MainListener implements Listener {
         for(int j = 0; j < TownyAPI.getInstance().getTowns().size(); j++){
             Town town = TownyAPI.getInstance().getTowns().get(j);
             if(!town.isPublic()){
+                Material material = Material.RED_STAINED_GLASS_PANE;
+                if(MetaDataUtil.hasMeta(town, MetaData.blockInMenu)){
+                    material = Material.valueOf(MetaData.getBlockInMenu(town));
+                }
                 ArrayList<String> itemlore = new ArrayList<>();
                 if(town.hasNation()) itemlore.add("§6§lNation§f§l: §3§l" + town.getNationOrNull().getName());
                 itemlore.add("§6§lMayor§f§l: §2§l" + town.getMayor().getName());
                 itemlore.add("§6§lResidents§f§l: §d§l" + town.getResidents().size());
                 itemlore.add("§6§lSpawn Cost§f§l: §c§l" + town.getSpawnCost());
-                inv.setItem(menuSlot, getItemLore(Material.RED_STAINED_GLASS_PANE, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
+                inv.setItem(menuSlot, getItemLore(material, "§c§l" + town.getFormattedName(), town.getName(), itemlore));
                 menuSlot++;
             }
         }
