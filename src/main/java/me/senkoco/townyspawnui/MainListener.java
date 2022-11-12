@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 
+import static java.lang.Integer.valueOf;
 import static org.bukkit.Bukkit.getLogger;
 
 public class MainListener implements Listener {
@@ -43,7 +44,7 @@ public class MainListener implements Listener {
             }else if(inv.getItem(0).getItemMeta().getLocalizedName().equals("townMenu")){
                 event.setCancelled(true);
                 if(current.getItemMeta().getLocalizedName().equals("townMenu")) return;
-                if(current.getItemMeta().getLocalizedName().equals("page1")){
+                if(current.getItemMeta().getDisplayName().equals("§6§lNext Page") || current.getItemMeta().getDisplayName().equals("§6§lPrevious Page") || current.getItemMeta().getDisplayName().equals("§6§lBack to Nations")) {
                     openTownsOfNation(event, current, player);
                 }else{
                     teleportToTown(player, current.getItemMeta().getLocalizedName());
@@ -75,21 +76,9 @@ public class MainListener implements Listener {
         event.setCancelled(true);
         if (current == null || !current.getItemMeta().hasLocalizedName() || current.getItemMeta().getLocalizedName().equals("nationMenu"))
             return;
-        switch (current.getItemMeta().getLocalizedName()) {
-            case "page1" -> {
-                CommandSpawnUI.openInventory(player, 1);
-                return;
-            }
-            case "page2" -> {
-                CommandSpawnUI.openInventory(player, 2);
-                return;
-            }
-            case "page3" -> {
-                CommandSpawnUI.openInventory(player, 3);
-                return;
-            }
-            default -> {
-            }
+        if(current.getItemMeta().getDisplayName().equals("§6§lNext Page") || current.getItemMeta().getDisplayName().equals("§6§lPrevious Page") || current.getItemMeta().getDisplayName().equals("§6§lBack to Nations")){
+            CommandSpawnUI.openInventory(player, valueOf(current.getItemMeta().getLocalizedName()));
+            return;
         }
         Nation nation = TownyAPI.getInstance().getNation(current.getItemMeta().getLocalizedName());
         Inventory inv = Bukkit.createInventory(null, 27, "§6§l" + nation.getName() + "§f§l: §3§lTowns");
@@ -112,7 +101,7 @@ public class MainListener implements Listener {
                 }
             }
         }
-        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
+        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "1"));
         CommandSpawnUI.fillEmpty(inv, townFiller);
         player.openInventory(inv);
     }
@@ -136,7 +125,7 @@ public class MainListener implements Listener {
                 menuSlot++;
             }
         }
-        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
+        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "1"));
         CommandSpawnUI.fillEmpty(inv, townFiller);
         player.openInventory(inv);
     }
@@ -161,7 +150,7 @@ public class MainListener implements Listener {
                 menuSlot++;
             }
         }
-        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "page1"));
+        inv.setItem(22, getItem(Material.ARROW, "§6§lBack to Nations", "1"));
         CommandSpawnUI.fillEmpty(inv, townFiller);
         player.openInventory(inv);
     }

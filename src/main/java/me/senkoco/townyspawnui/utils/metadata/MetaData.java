@@ -24,7 +24,7 @@ public class MetaData {
         MetaDataUtil.setString(nation, blockInMenu, blockName, true);
     }
 
-        public static void setBlockInMenu(Town town, String blockName){
+    public static void setBlockInMenu(Town town, String blockName){
         if(!town.hasMeta("townyspawnui_blockinmenu")){
             MetaDataUtil.addNewStringMeta(town, "townyspawnui_blockinmenu", blockName, true);
             return;

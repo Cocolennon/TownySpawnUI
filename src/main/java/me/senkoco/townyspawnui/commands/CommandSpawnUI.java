@@ -20,13 +20,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class CommandSpawnUI implements CommandExecutor {
-    ItemStack noNation = getItem(Material.BLUE_STAINED_GLASS_PANE, "§c§lNation-less Towns", "noNation");
-    ItemStack notPublic = getItem(Material.PURPLE_STAINED_GLASS_PANE, "§c§lPrivate Towns", "notPublic");
-    int menuSlot = 10;
-    static Inventory inv = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations");
-    static Inventory inv2 = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations (2)");
-    static Inventory inv3 = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations (3)");
+    static ItemStack noNation = getItem(Material.BLUE_STAINED_GLASS_PANE, "§c§lNation-less Towns", "noNation");
+    static ItemStack notPublic = getItem(Material.PURPLE_STAINED_GLASS_PANE, "§c§lPrivate Towns", "notPublic");
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -37,23 +35,18 @@ public class CommandSpawnUI implements CommandExecutor {
             return false;
         }
 
-        List<Nation> Nations = new LinkedList<Nation>(TownyUniverse.getInstance().getNations());
-        int nationsCount = TownyUniverse.getInstance().getNations().size();
+        List<Inventory> inventories = new LinkedList<Inventory>(getPages());
+        p.openInventory(inventories.get(0));
 
-        addNoNationsItems();
-        addPrivatesItems();
-        prepareInventories(nationsCount, Nations);
-
-        fillEmpty(inv, getItem(Material.BLACK_STAINED_GLASS_PANE, " ", "nationMenu"));
-        fillEmpty(inv2, getItem(Material.BLACK_STAINED_GLASS_PANE, " ", "nationMenu"));
-        fillEmpty(inv3, getItem(Material.BLACK_STAINED_GLASS_PANE, " ", "nationMenu"));
-
-        openInventory(p, 1);
-
-        return false;
+        return true;
     }
 
-    public ItemStack getItem(Material material, String newName, String localizedName){
+    public static void openInventory(Player player, int page) {
+        List<Inventory> inventories = new LinkedList<Inventory>(getPages());
+        player.openInventory(inventories.get(page));
+    }
+
+    public static ItemStack getItem(Material material, String newName, String localizedName){
         ItemStack it = new ItemStack(material, 1);
         ItemMeta itM = it.getItemMeta();
         if(newName != null) itM.setDisplayName(newName);
@@ -62,7 +55,7 @@ public class CommandSpawnUI implements CommandExecutor {
         return it;
     }
 
-    public ItemStack getItemLore(Material material, String newName, String localizedName, ArrayList<String> itemlore){
+    public static ItemStack getItem(Material material, String newName, String localizedName, ArrayList<String> itemlore){
         ItemStack it = new ItemStack(material, 1);
         ItemMeta itM = it.getItemMeta();
         if(newName != null) itM.setDisplayName(newName);
@@ -80,101 +73,13 @@ public class CommandSpawnUI implements CommandExecutor {
         }
     }
 
-    public static void openInventory(Player player, int page) {
-        if(page == 1)  player.openInventory(inv);
-        else if(page == 2) player.openInventory(inv2);
-        else if(page == 3) player.openInventory(inv3);
-    }
-
-    public void prepareInventories(int nationsCount, List<Nation> Nations){
-        if(nationsCount > 7){
-            inv.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "page2"));
-            inv2.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "page1"));
-            menuSlot = 10;
-            for(int j = 0; j < 7; j++){
-                String nationName = Nations.get(j).toString();
-                Nation nation = TownyAPI.getInstance().getNation(nationName);
-                Material material = Material.RED_STAINED_GLASS_PANE;
-                if(MetaDataUtil.hasMeta(nation, MetaData.blockInMenu)){
-                    material = Material.valueOf(MetaData.getBlockInMenu(nation));
-                }
-                ArrayList<String> itemlore = new ArrayList<>();
-                setGlobalLore(itemlore, nation);
-                inv.setItem(menuSlot, getItemLore(material, "§c§l" + nation.getName(), nation.getName(), itemlore));
-                menuSlot++;
-            }
-            if(nationsCount > 14){
-                inv2.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "page3"));
-                inv3.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "page2"));
-                menuSlot = 10;
-                for(int j = 7; j < 14; j++){
-                    String nationName = Nations.get(j).toString();
-                    Nation nation = TownyAPI.getInstance().getNation(nationName);
-                    Material material = Material.RED_STAINED_GLASS_PANE;
-                    if(MetaDataUtil.hasMeta(nation, MetaData.blockInMenu)){
-                        material = Material.valueOf(MetaData.getBlockInMenu(nation));
-                    }
-                    ArrayList<String> itemlore = new ArrayList<>();
-                    setGlobalLore(itemlore, nation);
-                    inv2.setItem(menuSlot, getItemLore(material, "§c§l" + nation.getName(), nation.getName(), itemlore));
-                    menuSlot++;
-                }
-                inv2.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "page1"));
-                inv2.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "page3"));
-                menuSlot = 10;
-                for(int j = 14; j < nationsCount; j++){
-                    String nationName = Nations.get(j).toString();
-                    Nation nation = TownyAPI.getInstance().getNation(nationName);
-                    Material material = Material.RED_STAINED_GLASS_PANE;
-                    if(MetaDataUtil.hasMeta(nation, MetaData.blockInMenu)){
-                        material = Material.valueOf(MetaData.getBlockInMenu(nation));
-                    }
-                    ArrayList<String> itemlore = new ArrayList<>();
-                    setGlobalLore(itemlore, nation);
-                    inv3.setItem(menuSlot, getItemLore(material, "§c§l" + nation.getName(), nation.getName(), itemlore));
-                    menuSlot++;
-                }
-            }else{
-                menuSlot = 10;
-                for(int j = 7; j < nationsCount; j++){
-                    String nationName = Nations.get(j).toString();
-                    Nation nation = TownyAPI.getInstance().getNation(nationName);
-                    Material material = Material.RED_STAINED_GLASS_PANE;
-                    if(MetaDataUtil.hasMeta(nation, MetaData.blockInMenu)){
-                        material = Material.valueOf(MetaData.getBlockInMenu(nation));
-                    }
-                    ArrayList<String> itemlore = new ArrayList<>();
-                    setGlobalLore(itemlore, nation);
-                    inv2.setItem(menuSlot, getItemLore(material, "§c§l" + nation.getName(), nation.getName(), itemlore));
-                    menuSlot++;
-                }
-            }
-        }else{
-            menuSlot = 10;
-            for(int j = 0; j < nationsCount; j++){
-                String nationName = Nations.get(j).toString();
-                Nation nation = TownyAPI.getInstance().getNation(nationName);
-                Material material = Material.RED_STAINED_GLASS_PANE;
-                if(MetaDataUtil.hasMeta(nation, MetaData.blockInMenu)){
-                    material = Material.valueOf(MetaData.getBlockInMenu(nation));
-                }
-                ArrayList<String> itemlore = new ArrayList<>();
-                setGlobalLore(itemlore, nation);
-                inv.setItem(menuSlot, getItemLore(material, "§c§l" + nation.getName(), nation.getName(), itemlore));
-                menuSlot++;
-            }
-        }
-    }
-
-    public void addNoNationsItems(){
+    public static void addNoNationsItems(Inventory inv){
         if(TownyAPI.getInstance().getTownsWithoutNation().size() != 0){
             inv.setItem(22, noNation);
-            inv2.setItem(22, noNation);
-            inv3.setItem(22, noNation);
         }
     }
 
-    public void addPrivatesItems(){
+    public static void addPrivatesItems(Inventory inv){
         int privateTownsCount = 0;
         for(int j = 0; j < TownyAPI.getInstance().getTowns().size(); j++){
             if(!TownyAPI.getInstance().getTowns().get(j).isPublic()){
@@ -184,15 +89,64 @@ public class CommandSpawnUI implements CommandExecutor {
 
         if(privateTownsCount != 0){
             inv.setItem(18, notPublic);
-            inv2.setItem(18, notPublic);
-            inv3.setItem(18, notPublic);
         }
     }
 
-    public void setGlobalLore(ArrayList<String> itemlore, Nation nation){
+    public static void setGlobalLore(ArrayList<String> itemlore, Nation nation){
         itemlore.add("§6§lLeader§f§l: §3§l" + nation.getKing().getName());
         itemlore.add("§6§lCapital§f§l: §2§l" + nation.getCapital().getName());
         itemlore.add("§6§lTowns§f§l: §9§l" + nation.getTowns().size());
         itemlore.add("§6§lTotal Residents§f§l: §d§l" + nation.getResidents().size());
+    }
+
+    public static int getPagesCount(int nationsCount){
+        return (int) nationsCount / 7;
+    }
+
+    public static List<Inventory> getPages(){
+        List<Nation> allNations = new LinkedList<Nation>(TownyUniverse.getInstance().getNations());
+        int nationCount = TownyUniverse.getInstance().getNations().size();
+
+        int nationsCount = 0;
+        int inventorySlots = 7;
+        List<Inventory> inventories = new LinkedList<Inventory>();
+
+        for(int pageNumber = 0; pageNumber < getPagesCount(nationCount)+1; pageNumber++){
+            Inventory newPage = Bukkit.createInventory(null, 27, "§6§lTowny§f§l: §3§lNations (" + (pageNumber+1) + ")");
+            List<Nation> nations = new LinkedList<Nation>();
+            if(pageNumber == getPagesCount(nationCount))
+                inventorySlots = nationCount - nationsCount;
+            for(int j = 0; j < inventorySlots; j++){
+                nations.add(allNations.get(nationsCount));
+                nationsCount++;
+            }
+            int menuSlot = 10;
+            for(int k = 0; k < nations.size(); k++){
+                Nation nation = nations.get(k);
+                Material material = Material.RED_STAINED_GLASS_PANE;
+                if(MetaDataUtil.hasMeta(nation, MetaData.blockInMenu)){
+                    material = Material.valueOf(MetaData.getBlockInMenu(nation));
+                }
+                ArrayList<String> itemlore = new ArrayList<>();
+                setGlobalLore(itemlore, nation);
+                newPage.setItem(menuSlot, getItem(material, "§c§l" + nation.getName(), nation.getName(), itemlore));
+                menuSlot++;
+            }
+            addNoNationsItems(newPage);
+            addPrivatesItems(newPage);
+            if(getPagesCount(nationCount) > 0){
+                if(pageNumber == 0){
+                    newPage.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "" + (pageNumber + 1)));
+                }else if(pageNumber == getPagesCount(nationCount)){
+                    newPage.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "" + (pageNumber - 1)));
+                }else{
+                    newPage.setItem(23, getItem(Material.ARROW, "§6§lNext Page", "" + (pageNumber + 1)));
+                    newPage.setItem(21, getItem(Material.ARROW, "§6§lPrevious Page", "" + (pageNumber - 1)));
+                }
+            }
+            fillEmpty(newPage, getItem(Material.BLACK_STAINED_GLASS_PANE, " ", "nationMenu"));
+            inventories.add(newPage);
+        }
+        return inventories;
     }
 }

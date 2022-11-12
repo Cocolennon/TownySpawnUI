@@ -32,7 +32,7 @@ public class CommandSetItemNation implements CommandExecutor {
 
             Material material;
             try {
-                material = Material.valueOf(args[0]);
+                material = Material.valueOf(args[0].toUpperCase());
             }catch(IllegalArgumentException e){
                 sender.sendMessage(ChatColor.RED + "Please provide a valid item or block name!\n" + ChatColor.RED + "Example: NETHER_STAR (must be full caps, and spaces replaced by underscores.");
                 return false;
