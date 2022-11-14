@@ -2,7 +2,7 @@ name: TownySpawnUI
 description: This plugin adds a browsable menu to teleport to other towns in Towny
 author: Senkoco
 main: me.senkoco.townyspawnui.Main
-version: 1.2.0
+version: 1.2.1
 api-version: 1.19
 depend: [Towny]
 permissions:
@@ -14,3 +14,21 @@ permissions:
     description: Permission allowing town mayors to set their town's item in the menu
   townyspawnui.set.nation.item:
     description: Permission allowing nation kings to set their nation's item in the menu
+  townyspawnui.set.default.item:
+    description: Permission allowing admins to set the default item in the menu
+  townyspawnui.*:
+    description: Permission to do anything
+    children:
+      townyspawnui.set.menu: true
+      townyspawnui.set.*: true
+  townyspawnui.menu.*:
+    description: Permission to do anything in the menu
+    children:
+      townyspawnui.menu.open: true
+      townyspawnui.menu.teleport: true
+  townyspawnui.set.*:
+    description: Permission to set anything
+    children:
+      townyspawnui.set.town.item: true
+      townyspawnui.set.nation.item: true
+      townyspawnui.set.default.item: true

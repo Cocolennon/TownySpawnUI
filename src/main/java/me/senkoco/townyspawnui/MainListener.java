@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 
@@ -26,8 +27,16 @@ public class MainListener implements Listener {
     ItemStack townFiller = getItem(Material.BLACK_STAINED_GLASS_PANE, "§c§lClick on any town to teleport to it!", "townMenu");
     int menuSlot = 1;
 
+    Plugin plugin = Bukkit.getPluginManager().getPlugin("TownySpawnUI");
+
     @EventHandler
     public void onClick(InventoryClickEvent event) {
+        if (plugin != null) {
+            if (plugin instanceof Main) {
+                Main main = (Main) plugin;
+            }
+        }
+
         Inventory inv = event.getInventory();
         Player player = (Player)event.getWhoClicked();
         ItemStack current = event.getCurrentItem();
@@ -87,7 +96,7 @@ public class MainListener implements Listener {
             for (int j = 0; j < nation.getTowns().size(); j++) {
                 Town town = nation.getTowns().get(j);
                 if(town.isPublic()){
-                    Material material = Material.RED_STAINED_GLASS_PANE;
+                    Material material = Material.valueOf(plugin.getConfig().getString("menu.defaultItem"));
                     if(MetaDataUtil.hasMeta(town, MetaData.blockInMenu)){
                         material = Material.valueOf(MetaData.getBlockInMenu(town));
                     }

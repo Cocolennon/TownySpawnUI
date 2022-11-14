@@ -34,7 +34,7 @@ public class CommandSetItemTown implements CommandExecutor {
             try {
                 material = Material.valueOf(args[0].toUpperCase());
             }catch(IllegalArgumentException e){
-                sender.sendMessage(ChatColor.RED + "Please provide a valid item or block name!\n" + ChatColor.RED + "Example: NETHER_STAR (must be full caps, and spaces replaced by underscores.");
+                sender.sendMessage(ChatColor.RED + "Please provide a valid item or block name!\n" + ChatColor.RED + "Example: nether_star (Insensitive to case, spaces must be replaced by underscores.");
                 return false;
             }
 

@@ -4,6 +4,7 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
+import me.senkoco.townyspawnui.Main;
 import me.senkoco.townyspawnui.utils.metadata.MetaData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -25,6 +27,7 @@ import static org.bukkit.Bukkit.getLogger;
 public class CommandSpawnUI implements CommandExecutor {
     static ItemStack noNation = getItem(Material.BLUE_STAINED_GLASS_PANE, "§c§lNation-less Towns", "noNation");
     static ItemStack notPublic = getItem(Material.PURPLE_STAINED_GLASS_PANE, "§c§lPrivate Towns", "notPublic");
+    static Plugin plugin = Bukkit.getPluginManager().getPlugin("TownySpawnUI");
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -33,6 +36,12 @@ public class CommandSpawnUI implements CommandExecutor {
         if(!sender.hasPermission("townyspawnui.menu.open")) {
             sender.sendMessage(ChatColor.RED + "You can't do that!");
             return false;
+        }
+
+        if (plugin != null) {
+            if (plugin instanceof Main) {
+                Main main = (Main) plugin;
+            }
         }
 
         List<Inventory> inventories = new LinkedList<Inventory>(getPages());
@@ -123,7 +132,7 @@ public class CommandSpawnUI implements CommandExecutor {
             int menuSlot = 10;
             for(int k = 0; k < nations.size(); k++){
                 Nation nation = nations.get(k);
-                Material material = Material.RED_STAINED_GLASS_PANE;
+                Material material = Material.valueOf(plugin.getConfig().getString("menu.defaultItem"));
                 if(MetaDataUtil.hasMeta(nation, MetaData.blockInMenu)){
                     material = Material.valueOf(MetaData.getBlockInMenu(nation));
                 }
