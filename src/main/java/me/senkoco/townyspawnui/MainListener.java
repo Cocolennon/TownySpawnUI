@@ -5,6 +5,7 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 import me.senkoco.townyspawnui.commands.CommandSpawnUI;
+import me.senkoco.townyspawnui.events.PlayerTeleportToTown;
 import me.senkoco.townyspawnui.utils.metadata.MetaData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,12 +23,13 @@ import java.util.ArrayList;
 
 import static java.lang.Integer.valueOf;
 import static org.bukkit.Bukkit.getLogger;
+import static org.bukkit.Bukkit.getPluginManager;
 
 public class MainListener implements Listener {
     ItemStack townFiller = getItem(Material.BLACK_STAINED_GLASS_PANE, "§c§lClick on any town to teleport to it!", "townMenu");
     int menuSlot = 1;
 
-    Plugin plugin = Bukkit.getPluginManager().getPlugin("TownySpawnUI");
+    Plugin plugin = getPluginManager().getPlugin("TownySpawnUI");
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
@@ -60,6 +62,15 @@ public class MainListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerTeleportToTown(PlayerTeleportToTown event){
+        Player player = event.getPlayer();
+        Town town = event.getTown();
+
+        player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[Towny Spawn UI] " + ChatColor.DARK_AQUA + "You have successfully been teleported to " + town.getName());
+        getLogger().info(player.getName() + " teleported to " + town.getName());
     }
 
     public ItemStack getItem(Material material, String newName, String localizedName){
@@ -172,6 +183,7 @@ public class MainListener implements Listener {
         }
         if(!town.isPublic()) return;
         player.performCommand("t spawn " + townName + " -ignore");
-        getLogger().info(player.getName() + " teleported to " + townName);
+        PlayerTeleportToTown playerTeleportToTown = new PlayerTeleportToTown(player, town);
+        getPluginManager().callEvent(playerTeleportToTown);
     }
 }
