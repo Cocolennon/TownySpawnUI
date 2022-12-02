@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -71,6 +72,17 @@ public class MainListener implements Listener {
 
         player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "[Towny Spawn UI] " + ChatColor.DARK_AQUA + "You have successfully been teleported to " + town.getName());
         getLogger().info(player.getName() + " teleported to " + town.getName());
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event){
+        Player player = event.getPlayer();
+
+        if(player.hasPermission("townyspawnui.*")) {
+            if(Main.getInstance().usingOldVersion){
+                player.sendMessage("§6§l[Towny Spawn UI] §3You are using an older version of TownySpawnUI, please update to version " + Main.getInstance().latestVersion);
+            }
+        }
     }
 
     public ItemStack getItem(Material material, String newName, String localizedName){

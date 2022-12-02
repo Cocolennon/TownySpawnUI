@@ -1,5 +1,7 @@
 package me.senkoco.townyspawnui;
 
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyCommandAddonAPI;
 import me.senkoco.townyspawnui.commands.CommandSetDefaultItem;
 import me.senkoco.townyspawnui.commands.CommandSetItemTown;
@@ -11,14 +13,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import static com.palmergames.bukkit.towny.TownyCommandAddonAPI.addSubCommand;
 
 public class Main extends JavaPlugin {
+    public static Main instance;
+    public String latestVersion;
+    public boolean usingOldVersion = false;
     FileConfiguration config = getConfig();
 
     @Override
@@ -26,6 +26,8 @@ public class Main extends JavaPlugin {
         new UpdateChecker(this, 105225).getVersion(version -> {
             if (!this.getDescription().getVersion().equals(version)) {
                 getLogger().info("You are using an older version of TownySpawnUI, please update to version " + version);
+                usingOldVersion = true;
+                latestVersion = version;
             }
         });
         setUpConfig();
@@ -52,5 +54,12 @@ public class Main extends JavaPlugin {
         config.addDefault("menu.defaultItem", "RED_STAINED_GLASS_PANE");
         config.options().copyDefaults(true);
         saveConfig();
+    }
+
+    public static Main getInstance() {
+        if (instance == null) {
+            instance = new Main();
+        }
+        return instance;
     }
 }
